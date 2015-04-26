@@ -6,17 +6,23 @@ import os
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        "Usage : manage.py groundwork <app> <model>"
-
-        PROJECT_ROOT = os.getcwd()
-        #PROJECT_NAME = os.getcwd().split('/')[:1]
+        "Usage : manage.py groundwork <project> <app> <model>"
+        
+        try:
+            project = args[0] # Project name is the first parameter
+            app = args[1] # App name is the second parameter
+            model_names = args[2:] # Models which need to be scaffolded will follow
+            PROJECT_ROOT = os.getcwd() 
+            TEMPLATE_DIR = os.path.join ( PROJECT_ROOT , app,'templates')
+            print 'PROJECT:' + project
+            print 'APP:' + app
+            print 'MODELS:{0}'.format(model_names)
+        except:
+            print "Usage : manage.py groundwork <project> <app> <model1> <model2> .."
 
         try:
-            app = args[0] # App name is the first parameter
-            model_names = args[1:] # Models which need to be scaffolded will follow
-            
-            TEMPLATE_DIR = os.path.join ( PROJECT_ROOT , app, 'templates')
-            
+
+
             model_instances = [ models.get_model(app, x) for x in model_names ]
 
             # url config
@@ -34,7 +40,8 @@ class Command(BaseCommand):
             f.close()
             
             # append to root urlconf
-            f = open( os.path.join (PROJECT_ROOT , 'urls.py') , 'a')
+            f = open( os.path.join (PROJECT_ROOT , project, 'urls.py') , 'a')
+            f.write("\n# added by django-scaffold\n")
             f.write( "\nurlpatterns += patterns ('',\n (r'^%(app)s/', include('%(app)s.urls')),\n)\n" % {'app': app } )
             f.close()
 
@@ -99,11 +106,12 @@ class Command(BaseCommand):
                 f.write( TEMPLATES_VIEW  %  { 'modelClass' : model_instance._meta.object_name,  'model' : model_instance._meta.object_name.lower()} )
                 f.close()
 
-            # settings
-            f = open(os.path.join(PROJECT_ROOT, 'settings.py'), 'a')
-            f.write( "\nimport os\nTEMPLATE_DIRS += (os.path.join(  os.path.dirname(__file__), 'templates') ,)\n")
-            f.close()
-                
-        except:
-            print "Usage : manage.py groundwork <app> <model>"
+            # append to settings
+            #f = open(os.path.join(PROJECT_ROOT, project, 'settings.py'), 'a')
+            #f.write( "\nimport os\nTEMPLATE_DIRS += (os.path.join(  os.path.dirname(__file__), 'templates') ,)\n")
+            #f.close()
+        except Exception,error:
+            print error
+        #except:
+        #    print "Usage : manage.py groundwork <project> <app> <model1> <model2> .."
 

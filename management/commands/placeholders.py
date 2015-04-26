@@ -5,15 +5,15 @@
 
 URL_IMPORTS = """
 from django.conf.urls import patterns
-from models import *
-from views import *
+from .models import *
+from .views import *
 
 urlpatterns = patterns('',
 """
 
 URL_CRUD_CONFIG = """
     (r'%(model)s/create/$', create_%(model)s),
-    (r'%(model)s/list/$', list_%(model)s ),
+    (r'%(model)s/list/$', list_%(model)s),
     (r'%(model)s/edit/(?P<id>[^/]+)/$', edit_%(model)s),
     (r'%(model)s/view/(?P<id>[^/]+)/$', view_%(model)s),
     """ 
@@ -30,7 +30,7 @@ URL_END = """
 
 FORMS_IMPORTS = """
 from django import forms
-from models import *
+from .models import *
 
 """
 
@@ -67,8 +67,8 @@ from django.core.urlresolvers import reverse
 
 # app specific files
 
-from models import *
-from forms import *
+from .models import *
+from .forms import *
 """
 
 VIEWS_CREATE = """
@@ -230,12 +230,13 @@ TEMPLATES_VIEW = """
 """
 
 TEMPLATES_BASE = """
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
-
-<head>
-	<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-	<meta name="description" content=""/>
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="" />
 	<meta name="keywords" content="" />
 	<meta name="author" content="" />
     <title>
@@ -277,7 +278,7 @@ TEMPLATES_BASE = """
 </div>
 
 <div id="explanation" align="center">
-django-groundwork
+  https://github.com/tmpbook/django-scaffold.git
 </div>
 
 </body>
