@@ -18,6 +18,5 @@ Run the following command:
 $ python manage.py groundwork <projectname> <appname> <modelname1> <modelname2> ..
 
 # you can see it by using the commond below.
-$ manage.py help
-
+$ python manage.py help
 ```
