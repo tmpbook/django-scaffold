@@ -6,7 +6,7 @@ import os
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        "Usage : manage.py groundwork <project> <app> <model>"
+        "Usage : manage.py groundwork <project> <app> <model> .."
         
         try:
             project = args[0] # Project name is the first parameter
