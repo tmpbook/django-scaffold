@@ -4,7 +4,7 @@
 
 
 URL_IMPORTS = """
-from django.conf.urls import patterns
+from django.conf.urls import patterns, include, url
 from .models import *
 from .views import *
 
@@ -12,10 +12,10 @@ urlpatterns = patterns('',
 """
 
 URL_CRUD_CONFIG = """
-    (r'%(model)s/create/$', create_%(model)s),
-    (r'%(model)s/list/$', list_%(model)s),
-    (r'%(model)s/edit/(?P<id>[^/]+)/$', edit_%(model)s),
-    (r'%(model)s/view/(?P<id>[^/]+)/$', view_%(model)s),
+    url(r'%(model)s/create/$', %(modelClass)sCreateView.as_view(), name='%(model)s-create'),
+    url(r'%(model)s/list/$', list_%(model)s),
+    url(r'%(model)s/edit/(?P<id>[^/]+)/$', edit_%(model)s),
+    url(r'%(model)s/view/(?P<id>[^/]+)/$', view_%(model)s),
     """ 
 
 URL_END = """
@@ -37,15 +37,15 @@ from .models import *
 FORMS_MODELFORM_CONFIG = """
 
 class %(modelClass)sForm(forms.ModelForm):
-	
+    
     class Meta:
-        model = %(modelClass)s	
+        model = %(modelClass)s
         # exclude = [] # uncomment this line and specify any field to exclude it from the form
 
     def __init__(self, *args, **kwargs):
         super(%(modelClass)sForm, self).__init__(*args, **kwargs)
 
-"""		
+"""        
 
 
 
@@ -64,6 +64,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import get_template
 from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
+from django.views.generic import ListView, CreateView, DetailView, UpdateView
 
 # app specific files
 
@@ -72,16 +73,20 @@ from .forms import *
 """
 
 VIEWS_CREATE = """
+class %(modelClass)sCreateView(CreateView):
+    template_name = '%(app)s/create_%(model)s.html'
+    model = %(modelClass)s
+    # fields = ['name', 'salutation'] #your choice
 
-def create_%(model)s(request):
-    form = %(modelClass)sForm(request.POST or None)
-    if form.is_valid():
-        form.save()
-        form = %(modelClass)sForm()
+#def create_%(model)s(request):
+#    form = %(modelClass)sForm(request.POST or None)
+#    if form.is_valid():
+#        form.save()
+#        form = %(modelClass)sForm()
 
-    t = get_template('%(app)s/create_%(model)s.html')
-    c = RequestContext(request,locals())
-    return HttpResponse(t.render(c))
+#    t = get_template('%(app)s/create_%(model)s.html')
+#    c = RequestContext(request,locals())
+#    return HttpResponse(t.render(c))
 
 """
 
@@ -175,9 +180,9 @@ TEMPLATES_LIST = """
 <thead>
 <tr><th>Record</th><th colspan="3">Actions</th></tr>
 {%% for item in list_items.object_list %%}
-  <tr><td>  {{item}}</td> <td><a href="{%% url %(app)s.views.view_%(model)s item.id %%}">Show</a> </td> <td><a href="{%% url %(app)s.views.edit_%(model)s item.id %%}">Edit</a></tr>
+  <tr><td>  {{item}}</td> <td><a href="">Show</a> </td> <td><a href="">Edit</a></tr>
 {%% endfor %%}
-<tr><td colspan="3"> <a href="{%% url %(app)s.views.create_%(model)s %%}">Add New</a></td></tr>
+<tr><td colspan="3"> <a href="{%% url "%(app)s:%(model)s-create" %%}">Add New</a></td></tr>
 </table>
 
 <div align="center">
@@ -236,9 +241,9 @@ TEMPLATES_BASE = """
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="" />
-	<meta name="keywords" content="" />
-	<meta name="author" content="" />
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <meta name="author" content="" />
     <title>
         {% block title %} {% endblock %}
     </title>

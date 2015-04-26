@@ -6,7 +6,7 @@ import os
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        "Usage : manage.py groundwork <project> <app> <model> .."
+        "Usage : manage.py groundwork <project> <app> <model>"
         
         try:
             project = args[0] # Project name is the first parameter
@@ -18,7 +18,7 @@ class Command(BaseCommand):
             print 'APP:' + app
             print 'MODELS:{0}'.format(model_names)
         except:
-            print "Usage : manage.py groundwork <project> <app> <model1> <model2> ..\nPlease check your input."
+            print "Usage : manage.py groundwork <project> <app> <model1> <model2> .."
 
         try:
 
@@ -39,10 +39,10 @@ class Command(BaseCommand):
             f.write(urls)
             f.close()
             
-            # append to root urlconfig
+            # append to root urlconf
             f = open( os.path.join (PROJECT_ROOT , project, 'urls.py') , 'a')
             f.write("\n# added by django-scaffold\n")
-            f.write( "\nurlpatterns += patterns ('',\n (r'^%(app)s/', include('%(app)s.urls')),\n)\n" % {'app': app } )
+            f.write( "\nurlpatterns += patterns ('',\n (r'^%(app)s/', include('%(app)s.urls', namespace='%(app)s')),\n)\n" % {'app': app } )
             f.close()
 
 
