@@ -18,6 +18,7 @@ Usage:
 )
 ```
  - Create the `models.py` file for your app with all the fields specified.
+
 ###**How to use?**
 -----------------
 Run the following command:
