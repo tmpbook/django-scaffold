@@ -18,7 +18,7 @@ class Command(BaseCommand):
             print 'APP:' + app
             print 'MODELS:{0}'.format(model_names)
         except:
-            print "Usage : manage.py groundwork <project> <app> <model1> <model2> .."
+            print "Usage : manage.py groundwork <project> <app> <model1> <model2> ..\nPlease check your input."
 
         try:
 
@@ -39,7 +39,7 @@ class Command(BaseCommand):
             f.write(urls)
             f.close()
             
-            # append to root urlconf
+            # append to root urlconfig
             f = open( os.path.join (PROJECT_ROOT , project, 'urls.py') , 'a')
             f.write("\n# added by django-scaffold\n")
             f.write( "\nurlpatterns += patterns ('',\n (r'^%(app)s/', include('%(app)s.urls')),\n)\n" % {'app': app } )
