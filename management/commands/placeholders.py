@@ -13,9 +13,9 @@ urlpatterns = patterns('',
 
 URL_CRUD_CONFIG = """
     url(r'%(model)s/create/$', %(modelClass)sCreateView.as_view(), name='%(model)s-create'),
-    url(r'%(model)s/list/$', list_%(model)s),
-    url(r'%(model)s/edit/(?P<id>[^/]+)/$', edit_%(model)s),
-    url(r'%(model)s/view/(?P<id>[^/]+)/$', view_%(model)s),
+    url(r'%(model)s/list/$', %(modelClass)sListView.as_view(), name='%(model)s-list'),
+    url(r'%(model)s/edit/(?P<id>[^/]+)/$', edit_%(model)s, name='%(model)s-edit'),
+    url(r'%(model)s/view/(?P<id>[^/]+)/$', view_%(model)s, name='%(model)s-view'),
     """ 
 
 URL_END = """
@@ -77,20 +77,17 @@ class %(modelClass)sCreateView(CreateView):
     template_name = '%(app)s/create_%(model)s.html'
     model = %(modelClass)s
     # fields = ['name', 'salutation'] #your choice
-
-#def create_%(model)s(request):
-#    form = %(modelClass)sForm(request.POST or None)
-#    if form.is_valid():
-#        form.save()
-#        form = %(modelClass)sForm()
-
-#    t = get_template('%(app)s/create_%(model)s.html')
-#    c = RequestContext(request,locals())
-#    return HttpResponse(t.render(c))
-
+    
+    def get_success_url(self):
+        return reverse("%(app)s:%(model)s-list")
 """
 
 VIEWS_LIST = """
+
+class %(modelClass)sListView(ListView):
+    template_name = '%(app)s/list_%(model)s.html'
+    model = %(modelClass)s
+    paginate_by = 5
 
 def list_%(model)s(request):
   
@@ -179,23 +176,23 @@ TEMPLATES_LIST = """
 <table>
 <thead>
 <tr><th>Record</th><th colspan="3">Actions</th></tr>
-{%% for item in list_items.object_list %%}
-  <tr><td>  {{item}}</td> <td><a href="">Show</a> </td> <td><a href="">Edit</a></tr>
+{%% for item in object_list %%}
+  <tr><td>  {{item}}</td> <td><a href="{%% url "%(app)s:%(model)s-view" id=item.id %%}">Show</a> </td> <td><a href="{%% url "%(app)s:%(model)s-edit" id=item.id %%}">Edit</a></tr>
 {%% endfor %%}
 <tr><td colspan="3"> <a href="{%% url "%(app)s:%(model)s-create" %%}">Add New</a></td></tr>
 </table>
 
 <div align="center">
-{%% if list_items.has_previous %%}
-    <a href="?page={{ list_items.previous_page_number }}">Previous</a>
+{%% if page_obj.has_previous %%}
+    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
 {%% endif %%}
 
 <span class="current">
-    Page {{ list_items.number }} of {{ list_items.paginator.num_pages }}.
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
 </span>
 
-{%% if list_items.has_next %%}
-        <a href="?page={{ list_items.next_page_number }}">Next</a>
+{%% if page_obj.has_next %%}
+        <a href="?page={{ page_obj.next_page_number }}">Next</a>
 {%% endif %%}
 
 </div>
