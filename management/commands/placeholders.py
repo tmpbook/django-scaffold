@@ -14,8 +14,8 @@ urlpatterns = patterns('',
 URL_CRUD_CONFIG = """
     url(r'%(model)s/create/$', %(modelClass)sCreateView.as_view(), name='%(model)s-create'),
     url(r'%(model)s/list/$', %(modelClass)sListView.as_view(), name='%(model)s-list'),
-    url(r'%(model)s/edit/(?P<id>[^/]+)/$', edit_%(model)s, name='%(model)s-edit'),
-    url(r'%(model)s/view/(?P<id>[^/]+)/$', view_%(model)s, name='%(model)s-view'),
+    url(r'%(model)s/edit/(?P<pk>[^/]+)/$', %(modelClass)sUpdateView.as_view(), name='%(model)s-edit'),
+    url(r'%(model)s/view/(?P<pk>[^/]+)/$', view_%(model)s, name='%(model)s-view'),
     """ 
 
 URL_END = """
@@ -35,7 +35,6 @@ from .models import *
 """
 
 FORMS_MODELFORM_CONFIG = """
-
 class %(modelClass)sForm(forms.ModelForm):
     
     class Meta:
@@ -83,39 +82,21 @@ class %(modelClass)sCreateView(CreateView):
 """
 
 VIEWS_LIST = """
-
 class %(modelClass)sListView(ListView):
     template_name = '%(app)s/list_%(model)s.html'
     model = %(modelClass)s
     paginate_by = 5
-
-def list_%(model)s(request):
-  
-    list_items = %(modelClass)s.objects.all()
-    paginator = Paginator(list_items ,10)
-
-
-    try:
-        page = int(request.GET.get('page', '1'))
-    except ValueError:
-        page = 1
-
-    try:
-        list_items = paginator.page(page)
-    except :
-        list_items = paginator.page(paginator.num_pages)
-
-    t = get_template('%(app)s/list_%(model)s.html')
-    c = RequestContext(request,locals())
-    return HttpResponse(t.render(c))
-
 """
 
 
 VIEWS_UPDATE = """
-def edit_%(model)s(request, id):
+class %(modelClass)sUpdateView(UpdateView):
+    template_name = '%(app)s/edit_%(model)s.html'
+    model = %(modelClass)s
+    
+def edit_%(model)s(request, pk):
 
-    %(model)s_instance = %(modelClass)s.objects.get(id=id)
+    %(model)s_instance = %(modelClass)s.objects.get(id=pk)
 
     form = %(modelClass)sForm(request.POST or None, instance = %(model)s_instance)
 
@@ -129,8 +110,8 @@ def edit_%(model)s(request, id):
 
 VIEWS_VIEW = """
 
-def view_%(model)s(request, id):
-    %(model)s_instance = %(modelClass)s.objects.get(id = id)
+def view_%(model)s(request, pk):
+    %(model)s_instance = %(modelClass)s.objects.get(id = pk)
 
     t=get_template('%(app)s/view_%(model)s.html')
     c=RequestContext(request,locals())
@@ -177,7 +158,7 @@ TEMPLATES_LIST = """
 <thead>
 <tr><th>Record</th><th colspan="3">Actions</th></tr>
 {%% for item in object_list %%}
-  <tr><td>  {{item}}</td> <td><a href="{%% url "%(app)s:%(model)s-view" id=item.id %%}">Show</a> </td> <td><a href="{%% url "%(app)s:%(model)s-edit" id=item.id %%}">Edit</a></tr>
+  <tr><td>  {{item}}</td> <td><a href="{%% url "%(app)s:%(model)s-view" pk=item.id %%}">Show</a> </td> <td><a href="{%% url "%(app)s:%(model)s-edit" pk=item.id %%}">Edit</a></tr>
 {%% endfor %%}
 <tr><td colspan="3"> <a href="{%% url "%(app)s:%(model)s-create" %%}">Add New</a></td></tr>
 </table>
