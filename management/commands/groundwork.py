@@ -64,7 +64,7 @@ class Command(BaseCommand):
             for model_instance in model_instances:
                 views_content += VIEWS_CREATE 
                 views_content += VIEWS_LIST
-                views_content += VIEWS_VIEW
+                views_content += VIEWS_DETAIL
                 views_content += VIEWS_UPDATE
                 
                 views_content = views_content %  {'model':model_instance._meta.object_name.lower(), 'modelClass': model_instance._meta.object_name, 'app': app } 
@@ -102,7 +102,7 @@ class Command(BaseCommand):
                 f.write( TEMPLATES_EDIT  %  { 'modelClass' : model_instance._meta.object_name } )
                 f.close()
                 
-                f = open(os.path.join( TEMPLATE_DIR, app, 'view_%s.html' % (model_instance._meta.object_name.lower()) ) , 'w')
+                f = open(os.path.join( TEMPLATE_DIR, app, 'detail_%s.html' % (model_instance._meta.object_name.lower()) ) , 'w')
                 f.write( TEMPLATES_VIEW  %  { 'modelClass' : model_instance._meta.object_name,  'model' : model_instance._meta.object_name.lower()} )
                 f.close()
 

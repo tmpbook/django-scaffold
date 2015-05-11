@@ -15,7 +15,7 @@ URL_CRUD_CONFIG = """
     url(r'%(model)s/create/$', %(modelClass)sCreateView.as_view(), name='%(model)s-create'),
     url(r'%(model)s/list/$', %(modelClass)sListView.as_view(), name='%(model)s-list'),
     url(r'%(model)s/edit/(?P<pk>[^/]+)/$', %(modelClass)sUpdateView.as_view(), name='%(model)s-edit'),
-    url(r'%(model)s/view/(?P<pk>[^/]+)/$', view_%(model)s, name='%(model)s-view'),
+    url(r'%(model)s/view/(?P<pk>[^/]+)/$', %(modelClass)sDetailView.as_view(), name='%(model)s-detail'),
     """ 
 
 URL_END = """
@@ -62,7 +62,7 @@ from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import get_template
 from django.core.paginator import Paginator
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
 
 # app specific files
@@ -78,7 +78,7 @@ class %(modelClass)sCreateView(CreateView):
     # fields = ['name', 'salutation'] #your choice
     
     def get_success_url(self):
-        return reverse("%(app)s:%(model)s-list")
+        return reverse_lazy("%(app)s:%(model)s-list")
 """
 
 VIEWS_LIST = """
@@ -94,6 +94,9 @@ class %(modelClass)sUpdateView(UpdateView):
     template_name = '%(app)s/edit_%(model)s.html'
     model = %(modelClass)s
     
+    def get_success_url(self):
+        return reverse_lazy("%(app)s:%(model)s-list")
+        
 def edit_%(model)s(request, pk):
 
     %(model)s_instance = %(modelClass)s.objects.get(id=pk)
@@ -108,8 +111,13 @@ def edit_%(model)s(request, pk):
     return HttpResponse(t.render(c))
 """
 
-VIEWS_VIEW = """
+VIEWS_DETAIL = """
 
+class %(modelClass)sDetailView(DetailView):
+    template_name = '%(app)s/detail_%(model)s.html'
+    model = %(modelClass)s
+
+    
 def view_%(model)s(request, pk):
     %(model)s_instance = %(modelClass)s.objects.get(id = pk)
 
@@ -130,7 +138,7 @@ TEMPLATES_CREATE = """
 
 {%% block title %%} %(modelClass)s - Create {%% endblock %%}
 
-{%% block heading %%}<h1>  %(modelClass)s - Create </h1>  {%% endblock %%}
+{%% block heading %%} <h1>%(modelClass)s </h1> <h2> Create </h2> {%% endblock %%}
 {%% block content %%} 
 <table>
 <form action="" method="POST"> {%% csrf_token %%}
@@ -146,19 +154,16 @@ TEMPLATES_CREATE = """
 TEMPLATES_LIST = """
 {%% extends "base.html" %%}
 
-{%% block title %%} <h1> %(modelClass)s </h1><h2> List </h2> {%% endblock %%}
+{%% block title %%} %(modelClass)s List  {%% endblock %%}
 
-{%% block heading %%} 
-<h1> %(modelClass)s</h1>
-<h2> List Records</h2>
-{%% endblock %%}
+{%% block heading %%} <h1> %(modelClass)s </h1> <h2> List </h2> {%% endblock %%}
 {%% block content %%} 
 
 <table>
 <thead>
 <tr><th>Record</th><th colspan="3">Actions</th></tr>
 {%% for item in object_list %%}
-  <tr><td>  {{item}}</td> <td><a href="{%% url "%(app)s:%(model)s-view" pk=item.id %%}">Show</a> </td> <td><a href="{%% url "%(app)s:%(model)s-edit" pk=item.id %%}">Edit</a></tr>
+  <tr><td>  {{item}}</td> <td><a href="{%% url "%(app)s:%(model)s-detail" pk=item.id %%}">Show</a> </td> <td><a href="{%% url "%(app)s:%(model)s-edit" pk=item.id %%}">Edit</a></tr>
 {%% endfor %%}
 <tr><td colspan="3"> <a href="{%% url "%(app)s:%(model)s-create" %%}">Add New</a></td></tr>
 </table>
@@ -184,9 +189,9 @@ TEMPLATES_LIST = """
 TEMPLATES_EDIT = """
 {%% extends "base.html" %%}
 
-{%% block title %%} %(modelClass)s - Edit {%% endblock %%}
+{%% block title %%} %(modelClass)s Edit {%% endblock %%}
 
-{%% block heading %%} <h1> %(modelClass)s</h1><h2> Edit </h2> {%% endblock %%}
+{%% block heading %%} <h1> %(modelClass)s </h1> <h2> Edit </h2>  {%% endblock %%}
 {%% block content %%} 
 <table>
 <form action="" method="POST"> {%% csrf_token %%}
@@ -202,12 +207,12 @@ TEMPLATES_EDIT = """
 TEMPLATES_VIEW = """
 {%% extends "base.html" %%}
 
-{%% block title %%} %(modelClass)s - View {%% endblock %%}
+{%% block title %%} %(modelClass)s View {%% endblock %%}
 
-{%% block heading %%} <h1> %(modelClass)s</h1><h2>View</h2>  {%% endblock %%}
+{%% block heading %%} <h1> %(modelClass)s </h1> <h2> Detail </h2> {%% endblock %%}
 {%% block content %%} 
 <table>
-{{ %(model)s_instance }}
+{{ object }}
 </table>
 {%% endblock %%}
 """
@@ -221,7 +226,7 @@ TEMPLATES_BASE = """
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="" />
     <meta name="keywords" content="" />
-    <meta name="author" content="" />
+    <meta name="author" content="tmpbook" />
     <title>
         {% block title %} {% endblock %}
     </title>
