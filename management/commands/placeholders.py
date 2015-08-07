@@ -17,7 +17,6 @@ URL_CRUD_CONFIG = """
     url(r'%(model)s/edit/(?P<pk>[^/]+)/$', %(modelClass)sUpdateView.as_view(), name='%(model)s-edit'),
     url(r'%(model)s/view/(?P<pk>[^/]+)/$', %(modelClass)sDetailView.as_view(), name='%(model)s-detail'),
     """ 
-
 URL_END = """
 )
 """
