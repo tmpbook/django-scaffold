@@ -16,11 +16,10 @@ URL_CRUD_CONFIG = """
     url(r'%(model)s/list/$', %(modelClass)sListView.as_view(), name='%(model)s-list'),
     url(r'%(model)s/edit/(?P<pk>[^/]+)/$', %(modelClass)sUpdateView.as_view(), name='%(model)s-edit'),
     url(r'%(model)s/view/(?P<pk>[^/]+)/$', %(modelClass)sDetailView.as_view(), name='%(model)s-detail'),
-    """ 
+    """
 URL_END = """
 )
 """
-
 
 
 # --------------------- #
@@ -35,7 +34,7 @@ from .models import *
 
 FORMS_MODELFORM_CONFIG = """
 class %(modelClass)sForm(forms.ModelForm):
-    
+
     class Meta:
         model = %(modelClass)s
         # exclude = [] # uncomment this line and specify any field to exclude it from the form
@@ -43,10 +42,7 @@ class %(modelClass)sForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(%(modelClass)sForm, self).__init__(*args, **kwargs)
 
-"""        
-
-
-
+"""
 
 
 # --------------------- #
@@ -92,10 +88,10 @@ VIEWS_UPDATE = """
 class %(modelClass)sUpdateView(UpdateView):
     template_name = '%(app)s/edit_%(model)s.html'
     model = %(modelClass)s
-    
+
     def get_success_url(self):
         return reverse_lazy("%(app)s:%(model)s-list")
-        
+
 def edit_%(model)s(request, pk):
 
     %(model)s_instance = %(modelClass)s.objects.get(id=pk)
@@ -116,7 +112,7 @@ class %(modelClass)sDetailView(DetailView):
     template_name = '%(app)s/detail_%(model)s.html'
     model = %(modelClass)s
 
-    
+
 def view_%(model)s(request, pk):
     %(model)s_instance = %(modelClass)s.objects.get(id = pk)
 
@@ -129,7 +125,6 @@ def view_%(model)s(request, pk):
 # ------------------------- #
 # templates.py file section #
 # ------------------------- #
-
 
 
 TEMPLATES_CREATE = """
@@ -271,4 +266,3 @@ TEMPLATES_BASE = """
 </body>
 </html>
 """
-
