@@ -37,7 +37,8 @@ class %(modelClass)sForm(forms.ModelForm):
 
     class Meta:
         model = %(modelClass)s
-        # exclude = [] # uncomment this line and specify any field to exclude it from the form
+        # exclude = []
+        # uncomment this line and specify any field to exclude it from the form
 
     def __init__(self, *args, **kwargs):
         super(%(modelClass)sForm, self).__init__(*args, **kwargs)
