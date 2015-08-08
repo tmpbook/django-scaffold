@@ -4,21 +4,26 @@
 
 
 URL_IMPORTS = """
-from django.conf.urls import patterns, include, url
+from django.conf.urls import url
 from .models import *
 from .views import *
 
-urlpatterns = patterns('',
+urlpatterns = [
+"""
+URL_CONFIG = """
+    # %(model)s url config
+    url(r'%(model)s/create/$', %(modelClass)sCreateView.as_view(),
+        name='%(model)s-create'),
+    url(r'%(model)s/list/$', %(modelClass)sListView.as_view(),
+        name='%(model)s-list'),
+    url(r'%(model)s/edit/(?P<pk>[^/]+)/$', %(modelClass)sUpdateView.as_view(),
+        name='%(model)s-edit'),
+    url(r'%(model)s/view/(?P<pk>[^/]+)/$', %(modelClass)sDetailView.as_view(),
+        name='%(model)s-detail'),
 """
 
-URL_CRUD_CONFIG = """
-    url(r'%(model)s/create/$', %(modelClass)sCreateView.as_view(), name='%(model)s-create'),
-    url(r'%(model)s/list/$', %(modelClass)sListView.as_view(), name='%(model)s-list'),
-    url(r'%(model)s/edit/(?P<pk>[^/]+)/$', %(modelClass)sUpdateView.as_view(), name='%(model)s-edit'),
-    url(r'%(model)s/view/(?P<pk>[^/]+)/$', %(modelClass)sDetailView.as_view(), name='%(model)s-detail'),
-    """
 URL_END = """
-)
+]
 """
 
 
@@ -37,6 +42,7 @@ class %(modelClass)sForm(forms.ModelForm):
 
     class Meta:
         model = %(modelClass)s
+        fields = '__all__'
         # exclude = []
         # uncomment this line and specify any field to exclude it from the form
 
@@ -72,7 +78,7 @@ class %(modelClass)sCreateView(CreateView):
     template_name = '%(app)s/create_%(model)s.html'
     model = %(modelClass)s
     # fields = ['name', 'salutation'] #your choice
-    
+
     def get_success_url(self):
         return reverse_lazy("%(app)s:%(model)s-list")
 """
@@ -97,7 +103,8 @@ def edit_%(model)s(request, pk):
 
     %(model)s_instance = %(modelClass)s.objects.get(id=pk)
 
-    form = %(modelClass)sForm(request.POST or None, instance = %(model)s_instance)
+    form = %(modelClass)sForm(request.POST or None, instance =
+        %(model)s_instance)
 
     if form.is_valid():
         form.save()

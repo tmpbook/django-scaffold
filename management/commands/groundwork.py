@@ -38,7 +38,7 @@ class Command(BaseCommand):
 
             # Generate CRUD urls for each model
             for model_instance in model_instances:
-                urls += URL_CRUD_CONFIG % {
+                urls += URL_CONFIG % {
                     'model': model_instance._meta.object_name.lower(),
                     'modelClass': model_instance._meta.object_name,
                 }
@@ -52,22 +52,23 @@ class Command(BaseCommand):
 
         # append to root urlconf
         f = open(os.path.join(PROJECT_ROOT, project, 'urls.py'), 'a')
-        f.write("\n# added by django-scaffold\n")
-        f.write(
-            "\nurlpatterns += patterns ('',\n (r'^%(app)s/', include('%(app)s.urls', namespace='%(app)s')),\n)\n" % {'app': app})
+        f.write("\n\n# Added by django-scaffold")
+        f.write("\nurlpatterns += [\n    url(r'^%(app)s/', include('%(app)s.urls', namespace='%(app)s')),\n]" % {'app': app})
         f.close()
-        
+
         # forms
         forms_content = FORMS_IMPORTS
         for model_instance in model_instances:
             forms_content += FORMS_MODELFORM_CONFIG % {
-                'modelClass': model_instance._meta.object_name}
+                'modelClass': model_instance._meta.object_name
+            }
 
         formspath = os.path.join(PROJECT_ROOT, app, 'forms.py')
         f = open(formspath, 'w')
         f.write(forms_content)
         f.close()
 
+"""
         # views
         views_content = VIEWS_IMPORTS
 
@@ -135,3 +136,4 @@ class Command(BaseCommand):
         # f = open(os.path.join(PROJECT_ROOT, project, 'settings.py'), 'a')
         # f.write( "\nimport os\nTEMPLATE_DIRS += (os.path.join(  os.path.dirname(__file__), 'templates') ,)\n")
         # f.close()
+"""

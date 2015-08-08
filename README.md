@@ -4,9 +4,9 @@ This app does all the groundwork(`forms.py`, `urls.py`, `templates/appname/*.htm
 
 Usage:
 
- - Include django-scaffold as a newly created app in your list of installed apps in `settings.py` .
+ - Include django-scaffold as a newly created app in your list of installed apps in `settings.py`.
 ```python
- INSTALLED_APPS = (
+INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -17,6 +17,7 @@ Usage:
     ...
 )
 ```
+ - Add the app to the `INSTALLED_APPS` whitch you just created.
  - Create the `models.py` file for your app with all the fields specified.
 
 ###**How to use?**
@@ -27,5 +28,4 @@ $ python manage.py groundwork <projectname> <appname> <modelname1> <modelname2> 
 
 # you can see it by using the commond below.
 $ manage.py help
-
 ```
