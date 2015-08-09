@@ -1,3 +1,4 @@
+# coding:utf8
 # -------------------- #
 # urls.py file section #
 # -------------------- #
@@ -42,8 +43,8 @@ class %(modelClass)sForm(forms.ModelForm):
 
     class Meta:
         model = %(modelClass)s
-        fields = '__all__'
-        # exclude = []
+        # fields = '__all__'
+        exclude = []
         # uncomment this line and specify any field to exclude it from the form
 
     def __init__(self, *args, **kwargs):
@@ -77,7 +78,7 @@ VIEWS_CREATE = """
 class %(modelClass)sCreateView(CreateView):
     template_name = '%(app)s/create_%(model)s.html'
     model = %(modelClass)s
-    # fields = ['name', 'salutation'] #your choice
+    fields = '__all__' # or ['name', 'description', ]
 
     def get_success_url(self):
         return reverse_lazy("%(app)s:%(model)s-list")
@@ -95,6 +96,7 @@ VIEWS_UPDATE = """
 class %(modelClass)sUpdateView(UpdateView):
     template_name = '%(app)s/edit_%(model)s.html'
     model = %(modelClass)s
+    fields = '__all__' or ['name', 'description', ]
 
     def get_success_url(self):
         return reverse_lazy("%(app)s:%(model)s-list")
@@ -140,8 +142,11 @@ TEMPLATES_CREATE = """
 
 {%% block title %%} %(modelClass)s - Create {%% endblock %%}
 
-{%% block heading %%} <h1>%(modelClass)s </h1> <h2> Create </h2> {%% endblock %%}
-{%% block content %%} 
+{%% block heading %%}
+    <h1> %(modelClass)s </h1> <h2> Create </h2>
+{%% endblock %%}
+
+{%% block content %%}
 <table>
 <form action="" method="POST"> {%% csrf_token %%}
   {{form}}
@@ -158,9 +163,11 @@ TEMPLATES_LIST = """
 
 {%% block title %%} %(modelClass)s List  {%% endblock %%}
 
-{%% block heading %%} <h1> %(modelClass)s </h1> <h2> List </h2> {%% endblock %%}
-{%% block content %%} 
+{%% block heading %%}
+    <h1> %(modelClass)s </h1> <h2> List </h2>
+{%% endblock %%}
 
+{%% block content %%}
 <table>
 <thead>
 <tr><th>Record</th><th colspan="3">Actions</th></tr>
@@ -193,16 +200,15 @@ TEMPLATES_EDIT = """
 
 {%% block title %%} %(modelClass)s Edit {%% endblock %%}
 
-{%% block heading %%} <h1> %(modelClass)s </h1> <h2> Edit </h2>  {%% endblock %%}
-{%% block content %%} 
-<table>
-<form action="" method="POST"> {%% csrf_token %%}
-  {{form}}
-  <tr>
-    <td colspan="2" align="right"><input type="submit" value="Save"/></td>
-  </tr>
-</form>
-</table>
+{%% block heading %%}
+    <h1> %(modelClass)s </h1> <h2> Edit </h2>
+{%% endblock %%}
+
+{%% block content %%}
+    <form action="" method="POST"> {%% csrf_token %%}
+        {{ form }}
+        <input type="submit" value="Save"/>
+    </form>
 {%% endblock %%}
 """
 
@@ -211,66 +217,48 @@ TEMPLATES_VIEW = """
 
 {%% block title %%} %(modelClass)s View {%% endblock %%}
 
-{%% block heading %%} <h1> %(modelClass)s </h1> <h2> Detail </h2> {%% endblock %%}
-{%% block content %%} 
-<table>
-{{ object }}
-</table>
+{%% block heading %%}
+    <h1> %(modelClass)s </h1> <h2> Detail </h2>
+{%% endblock %%}
+
+{%% block content %%}
+    <table>
+        {{ object }}
+    </table>
 {%% endblock %%}
 """
 
 TEMPLATES_BASE = """
+{% load staticfiles %}
 <!DOCTYPE html>
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8">
+    <!--<meta http-equiv="refresh" content="60">-->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="" />
-    <meta name="keywords" content="" />
-    <meta name="author" content="tmpbook" />
-    <title>
-        {% block title %} {% endblock %}
-    </title>
-      <style type="text/css"> 
-        html * { padding:0; margin:0; }
-        body * { padding:10px 20px; }
-        body * * { padding:0; }
-        body { font:small sans-serif; }
-        body>div { border-bottom:1px solid #ddd; }
-        h1 { font-weight:normal; }
-        h2 { margin-bottom:.8em; }
-        h2 span { font-size:80% ; color:#666; font-weight:normal; }
-        h3 { margin:1em 0 .5em 0; }
-        h4 { margin:0 0 .5em 0; font-weight: normal; }
-        td {font-size:1em;  padding:3px 17px 2px 17px;}
-        ul { margin-left: 2em; margin-top: 1em; }
-        #summary { background: #e0ebff; }
-        #summary h2 { font-weight: normal; color: #666; }
-        #explanation { background:#eee; }
-        #content { background:#f6f6f6; }
-        #summary table { border:none; background:transparent; }
-      </style> 
-</head>
-<body>
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+
+    {% block title %}
+        <title>主页</title>
+    {% endblock %}
+
+    {% block css %}
+    {% endblock %}
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
 
 
-<div id="summary">
-{% block heading %}  
-{% endblock %}
-</div>
+  </head>
 
-<div id="content">
-{% block content %} 
-
-
-{% endblock %}
-</div>
-
-<div id="explanation" align="center">
-  https://github.com/tmpbook/django-scaffold.git
-</div>
-
-</body>
-</html>
+  <body>
+      {% block content %}
+    This is the base.html
+      {% endblock %}
+  </body>
 """

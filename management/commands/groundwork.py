@@ -45,7 +45,7 @@ class Command(BaseCommand):
 
         urls += URL_END
 
-        # write to urls.py
+        # write the app's urls.py
         f = open(os.path.join(PROJECT_ROOT, app, 'urls.py'), 'w')
         f.write(urls)
         f.close()
@@ -56,7 +56,7 @@ class Command(BaseCommand):
         f.write("\nurlpatterns += [\n    url(r'^%(app)s/', include('%(app)s.urls', namespace='%(app)s')),\n]" % {'app': app})
         f.close()
 
-        # forms
+        # forms.py
         forms_content = FORMS_IMPORTS
         for model_instance in model_instances:
             forms_content += FORMS_MODELFORM_CONFIG % {
@@ -68,8 +68,7 @@ class Command(BaseCommand):
         f.write(forms_content)
         f.close()
 
-"""
-        # views
+        # views.py
         views_content = VIEWS_IMPORTS
 
         for model_instance in model_instances:
@@ -90,7 +89,6 @@ class Command(BaseCommand):
         f.close()
 
         # Templates
-
         template_dir = os.path.join(TEMPLATE_DIR, app)
         if not os.path.exists(template_dir):
             os.makedirs(template_dir)
@@ -101,22 +99,26 @@ class Command(BaseCommand):
             f = open(os.path.join(TEMPLATE_DIR, 'base.html'), 'w')
             f.write(TEMPLATES_BASE)
             f.close()
+        else:
+            return
 
         for model_instance in model_instances:
             f = open(os.path.join(TEMPLATE_DIR, app, 'create_%s.html' % (
                 model_instance._meta.object_name.lower())), 'w')
-            f.write(TEMPLATES_CREATE %
-                    {'modelClass': model_instance._meta.object_name})
+            f.write(TEMPLATES_CREATE % {
+                'modelClass': model_instance._meta.object_name
+                }
+            )
             f.close()
 
             f = open(os.path.join(TEMPLATE_DIR, app, 'list_%s.html' % (
                 model_instance._meta.object_name.lower())), 'w')
             f.write(TEMPLATES_LIST % {
-                        'modelClass': model_instance._meta.object_name,
-                        'model': model_instance._meta.object_name.lower(),
-                        'app': app
-                        }
-                    )
+                'modelClass': model_instance._meta.object_name,
+                'model': model_instance._meta.object_name.lower(),
+                'app': app
+                }
+            )
             f.close()
 
             f = open(os.path.join(TEMPLATE_DIR, app, 'edit_%s.html' % (
@@ -136,4 +138,3 @@ class Command(BaseCommand):
         # f = open(os.path.join(PROJECT_ROOT, project, 'settings.py'), 'a')
         # f.write( "\nimport os\nTEMPLATE_DIRS += (os.path.join(  os.path.dirname(__file__), 'templates') ,)\n")
         # f.close()
-"""
