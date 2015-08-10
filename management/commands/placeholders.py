@@ -17,9 +17,9 @@ URL_CONFIG = """
         name='%(model)s-create'),
     url(r'%(model)s/list/$', %(modelClass)sListView.as_view(),
         name='%(model)s-list'),
-    url(r'%(model)s/edit/(?P<pk>[^/]+)/$', %(modelClass)sUpdateView.as_view(),
+    url(r'%(model)s/edit/(?P<pk>\w+)/$', %(modelClass)sUpdateView.as_view(),
         name='%(model)s-edit'),
-    url(r'%(model)s/view/(?P<pk>[^/]+)/$', %(modelClass)sDetailView.as_view(),
+    url(r'%(model)s/view/(?P<slug>[-\w]+)/$', %(modelClass)sDetailView.as_view(),
         name='%(model)s-detail'),
 """
 
@@ -60,15 +60,11 @@ class %(modelClass)sForm(forms.ModelForm):
 VIEWS_IMPORTS = """
 # Create your views here.
 
-from django import forms
-from django.template import RequestContext
-from django.http import HttpResponse, HttpResponseRedirect
-from django.template.loader import get_template
-from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
+from django.utils import timezone
 
-# app specific files
+# app specific
 
 from .models import *
 from .forms import *
@@ -78,7 +74,8 @@ VIEWS_CREATE = """
 class %(modelClass)sCreateView(CreateView):
     template_name = '%(app)s/create_%(model)s.html'
     model = %(modelClass)s
-    fields = '__all__' # or ['name', 'description', ]
+    fields = '__all__'
+    # or ['name', 'description', ]
 
     def get_success_url(self):
         return reverse_lazy("%(app)s:%(model)s-list")
@@ -91,44 +88,26 @@ class %(modelClass)sListView(ListView):
     paginate_by = 5
 """
 
-
 VIEWS_UPDATE = """
 class %(modelClass)sUpdateView(UpdateView):
     template_name = '%(app)s/edit_%(model)s.html'
     model = %(modelClass)s
-    fields = '__all__' or ['name', 'description', ]
+    fields = '__all__'
+    # or ['name', 'description', ]
 
     def get_success_url(self):
         return reverse_lazy("%(app)s:%(model)s-list")
-
-def edit_%(model)s(request, pk):
-
-    %(model)s_instance = %(modelClass)s.objects.get(id=pk)
-
-    form = %(modelClass)sForm(request.POST or None, instance =
-        %(model)s_instance)
-
-    if form.is_valid():
-        form.save()
-
-    t=get_template('%(app)s/edit_%(model)s.html')
-    c=RequestContext(request,locals())
-    return HttpResponse(t.render(c))
 """
 
 VIEWS_DETAIL = """
-
 class %(modelClass)sDetailView(DetailView):
     template_name = '%(app)s/detail_%(model)s.html'
     model = %(modelClass)s
 
-
-def view_%(model)s(request, pk):
-    %(model)s_instance = %(modelClass)s.objects.get(id = pk)
-
-    t=get_template('%(app)s/view_%(model)s.html')
-    c=RequestContext(request,locals())
-    return HttpResponse(t.render(c))
+    def get_context_data(self, **kwargs):
+        context = super(%(modelClass)sDetailView, self).get_context_data(**kwargs)
+        context['now'] = timezone.now()
+        return context
 """
 
 
@@ -252,13 +231,11 @@ TEMPLATES_BASE = """
       <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
-
   </head>
 
   <body>
-      {% block content %}
-    This is the base.html
-      {% endblock %}
+    {% block content %}
+        This is the base.html
+    {% endblock %}
   </body>
 """
