@@ -19,7 +19,7 @@ URL_CONFIG = """
         name='%(model)s-list'),
     url(r'%(model)s/edit/(?P<pk>\w+)/$', %(modelClass)sUpdateView.as_view(),
         name='%(model)s-edit'),
-    url(r'%(model)s/view/(?P<slug>[-\w]+)/$', %(modelClass)sDetailView.as_view(),
+    url(r'%(model)s/view/(?P<pk>[-\w]+)/$', %(modelClass)sDetailView.as_view(),
         name='%(model)s-detail'),
 """
 
