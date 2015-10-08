@@ -133,8 +133,3 @@ class Command(BaseCommand):
                     'modelClass': model_instance._meta.object_name,
                     'model': model_instance._meta.object_name.lower()})
             f.close()
-
-        # append to settings
-        # f = open(os.path.join(PROJECT_ROOT, project, 'settings.py'), 'a')
-        # f.write( "\nimport os\nTEMPLATE_DIRS += (os.path.join(  os.path.dirname(__file__), 'templates') ,)\n")
-        # f.close()

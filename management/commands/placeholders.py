@@ -218,14 +218,13 @@ TEMPLATES_BASE = """
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
 
-    {% block title %}
-        <title>主页</title>
-    {% endblock %}
+    <title>
+        {% block title %}
+            主页
+        {% endblock %}
+    </title>
 
     {% block css %}
-    {% endblock %}
-    
-    {% block script %}
     {% endblock %}
     
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -241,4 +240,7 @@ TEMPLATES_BASE = """
         This is the base.html
     {% endblock %}
   </body>
+
+{% block script %}
+{% endblock %}
 """
