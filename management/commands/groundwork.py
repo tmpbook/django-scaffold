@@ -1,4 +1,6 @@
 # coding:utf8
+__author__ = "kevin gao"
+__email__ = "nauy2011@126.com"
 from django.core.management.base import BaseCommand, CommandError
 from django.db import models
 from placeholders import *
